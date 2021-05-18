@@ -1,0 +1,105 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+#ifndef CUSTOMERINFO_H
+#define CUSTOMERINFO_H
+#include "Customer.h"
+
+
+
+   int writeCustomer (customer* cList){
+       FILE *f;
+       int num = 2;
+       int i;
+       if (f = fopen("info.dat", "w")){
+        fwrite(&num, sizeof(int), 1, f);
+
+        for (i=0; i<num; i++) {
+            if (!fwrite(&cList, sizeof(customer), 1, f)) {
+
+                perror("Problem writing to file");
+                return -2;
+            }}
+            fclose(f);
+            return 0;
+       }
+       perror("File could not be opened. ");
+       return -1;
+   }
+
+
+   customer* loadCustomer (char* filename, int num) {
+       FILE *f;
+       customer *result;
+       int i;
+        if  (f= fopen(filename, "r")) {
+       // fread(num, sizeof(int), 1, f)
+        result = (customer*) calloc (num, sizeof(customer));
+
+    for (i=0; i<num; i++)
+    if (!fread(result+i, sizeof(customer),1,f)) {
+        perror("Problem reading from file");
+        return NULL;
+    }
+    fclose(f);
+    return result; }
+    perror("File could not be opened.");
+    return NULL;
+   }
+
+
+
+
+
+   int updateCustomer (char* filename){
+       FILE* f;
+       customer cus;
+
+
+        if  (f= fopen(filename, "r+")) {
+                int pos = ((sizeof(customer)+3)*-1);
+        fseek(f, pos, SEEK_END);
+        fread(&cus, sizeof(customer), 1, f);
+        cus = enter_customerInfo();
+        fseek(f, pos, SEEK_END);
+        if (!fwrite(&cus, sizeof(customer), 1, f)) {
+             perror("Problem writing to file");
+                return -1;
+        }
+        fclose(f);
+        return 0;
+        }  perror("File could not be opened.");
+        return -1;
+   }
+
+
+   void print_customer (customer* c){
+
+printf("\nCustomer's Name: %s", c->fulName);
+printf("\nCustomer's Account#: %d", c->accNum);
+printf("\nCustomer's Account Type: %s", c->accType);
+
+printf("\n-----------------");
+
+   }
+
+
+   customer enter_customerInfo(){
+
+       customer cus;
+       printf("\nEnter Full Name: ");
+       fgets(cus.fulName, 100, stdin);
+
+       printf("Enter Account Number: ");
+       scanf("%d", &(cus.accNum));
+       getchar();
+
+       printf("Enter Account Type (checking/saving): ");
+       fgets(cus.accType, 15, stdin);
+
+       return cus;
+   }
+
+
+
+#endif // CUSTOMERINFO_H
